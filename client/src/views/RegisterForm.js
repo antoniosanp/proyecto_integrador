@@ -1,4 +1,8 @@
+import { Map } from "../components/Map.js";
+
 export function RegisterForm() {
+  console.log(navigator.geolocation);
+  
     return `<form class="max-w-md mx-auto bg-white min-h-screen p-6">
 
   <!-- Header -->
@@ -115,9 +119,8 @@ export function RegisterForm() {
   </div>
 
   <div class="relative mb-6">
-    <div class="w-full h-40 bg-gray-200 rounded-2xl flex items-center justify-center">
-      🗺 Map Preview
-    </div>
+    
+      ${Map()}
     <button class="absolute bottom-3 right-3 bg-white shadow-md rounded-full p-2">
       ⚙
     </button>
@@ -137,6 +140,7 @@ export function RegisterForm() {
 
 </form>`
 }
+
 
 document.addEventListener('click', (e) => {
     /* Submit button */
