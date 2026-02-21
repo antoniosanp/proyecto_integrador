@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { getPassengers } from "../controllers/passengers.controller.js";
+import { getPassengers, createPassenger } from "../controllers/passengers.controller.js";
 
 const router = Router();
 
@@ -8,8 +8,6 @@ const router = Router();
 router.get("/",getPassengers)
 
 // POST /api/passengers
-router.post("/", (req, res) => {
-  res.json({ message: "Crear pasajero" });
-});
+router.post("/",createPassenger)
 
 export default router;
