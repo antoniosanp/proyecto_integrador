@@ -1,9 +1,9 @@
 import { Map } from "../components/Map.js";
+import { getNaturalAddress } from "../utils/utils.js";
 
 export function RegisterForm() {
-  console.log(navigator.geolocation);
-  
-    return `<form class="max-w-md mx-auto bg-white min-h-screen p-6">
+
+  return `<form class="max-w-md mx-auto bg-white min-h-screen p-6">
 
   <!-- Header -->
   <div class="flex items-center gap-4 mb-6">
@@ -27,7 +27,7 @@ export function RegisterForm() {
   <!-- Full Name -->
   <div class="mb-4">
     <label for="full_name" class="block text-sm font-medium mb-2">Full Name</label>
-    <input type="text" name="full_name"
+    <input type="text" name="full_name" required
       placeholder="John Doe"
       class="w-full border rounded-xl px-4 py-3 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
   </div>
@@ -45,10 +45,11 @@ export function RegisterForm() {
     <label class="block text-sm font-medium mb-2">Phone Number</label>
     <div class="flex gap-2">
       <input type="text"
-        value="+251"
+        value="+57"
         class="w-20 border rounded-xl px-3 py-3 bg-gray-50 focus:outline-none"/>
       <input type="text"
-        placeholder="912 345 678"
+        name="phone"
+        placeholder="312 345 67 85"
         class="flex-1 border rounded-xl px-4 py-3 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
     </div>
   </div>
@@ -65,7 +66,12 @@ export function RegisterForm() {
       value="passenger" 
       class="peer hidden"
     />
-        <div class="choose-role relative border rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-indigo-500 transition">
+        <div class="choose-role relative border rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer transition
+        text-gray-600 
+        peer-checked:bg-indigo-100 
+        peer-checked:text-indigo-600 
+        peer-checked:border-indigo-500
+        peer-checked:border-2">
         <div class="w-10 h-10 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600">
             👤
         </div>
@@ -76,7 +82,7 @@ export function RegisterForm() {
         </div>
     </label>
 
-    <!-- Driver (Selected) -->
+    <!-- (Selected) -->
     <label class="cursor-pointer">
     <input 
       type="radio" 
@@ -84,11 +90,16 @@ export function RegisterForm() {
       value="driver" 
       class="peer hidden"
     />
-    <div class="choose-role relative border rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-indigo-500 transition">
-      <div class="w-10 h-10 flex items-center justify-center bg-indigo-500 rounded-full text-white">
+    <div class="choose-role relative border rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer
+        text-gray-600 transition
+        peer-checked:bg-indigo-100 
+        peer-checked:text-indigo-600 
+        peer-checked:border-indigo-500
+        peer-checked:border-2">
+      <div class="w-10 h-10 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600">
         🚗
       </div>
-      <span class="text-sm font-medium text-indigo-600">Driver</span>
+      <span class="text-sm font-medium ">Driver</span>
       <span class="check hidden absolute top-2 right-2 w-5 h-5 bg-indigo-500 text-white text-xs rounded-full flex items-center justify-center">
         ✓
       </span>
@@ -99,31 +110,70 @@ export function RegisterForm() {
 
   <!-- Vehicle Type -->
   <h3 class="font-semibold mb-3">Select Vehicle Type</h3>
-  <div class="flex gap-4 mb-6">
+ <div class="flex gap-4">
 
-    <button type="button" class="flex-1 border rounded-xl py-3 flex items-center justify-center gap-2 text-gray-600 hover:cursor-pointer">
+  <!-- CAR -->
+  <label class="w-full cursor-pointer">
+    <input
+      type="radio" 
+      name="vehicle_type" 
+      value="car" 
+      class="peer hidden" 
+      required
+    />
+
+    <div class="w-full border rounded-xl py-3 flex items-center justify-center gap-2 
+                text-gray-600 transition
+                peer-checked:bg-indigo-100 
+                peer-checked:text-indigo-600 
+                peer-checked:border-indigo-500
+                peer-checked:border-2">
       🚗 Car
-    </button>
+    </div>
+  </label>
 
-    <button type="button" class="flex-1 border rounded-xl py-3 flex items-center justify-center gap-2 text-gray-600 hover:cursor-pointer">
+
+  <!-- MOTORCYCLE -->
+  <label class="w-full cursor-pointer">
+    <input 
+      type="radio" 
+      name="vehicle_type" 
+      value="motorcycle" 
+      class="peer hidden"
+      required
+    />
+
+    <div class="w-full border rounded-xl py-3 flex items-center justify-center gap-2 
+                text-gray-600 transition
+                peer-checked:bg-indigo-100 
+                peer-checked:text-indigo-600 
+                peer-checked:border-indigo-500
+                peer-checked:border-2">
       🏍 Motorcycle
-    </button>
-  </div>
+    </div>
+  </label>
 
+</div>
   <!-- Location -->
   <h3 class="font-semibold mb-3">Set your location</h3>
 
-  <div class="border rounded-xl px-4 py-3 flex items-center gap-2 mb-4 bg-gray-50">
-    <span class="text-indigo-600">📍</span>
-    <span class="text-sm">Bole District, Addis Ababa</span>
-  </div>
+  <div class="relative mb-4">
+    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-600">
+      📍
+    </span>
 
-  <div class="relative mb-6">
+    <input 
+      type="text"
+      id="location"
+      placeholder="Bole District, Addis Ababa"
+      class="w-full border rounded-xl pl-10 pr-4 py-3 bg-gray-50"
+    />
+    </div>
+    <ul class="max-h-40 overflow-y-auto" id="location-list">
     
+    </ul>
+  <div class="mb-6">
       ${Map()}
-    <button class="absolute bottom-3 right-3 bg-white shadow-md rounded-full p-2">
-      ⚙
-    </button>
   </div>
 
   <!-- Button -->
@@ -141,52 +191,82 @@ export function RegisterForm() {
 </form>`
 }
 
+let selectedLocation = null;
 
-document.addEventListener('click', (e) => {
-    /* Submit button */
-    if (e.target.type == 'submit') {
-        e.preventDefault()
-        /* Get form */
-        const form = e.target.closest('form')
-        console.log(form);
-        /* Get data from form */
-        const data = new FormData(form);
-        console.log(Object.fromEntries(data.entries()));
+document.addEventListener('input', async (e) => {
+  if (e.target.id == 'location') {
+    const query = e.target.value.toLowerCase();
+    if (query.length > 2) {
+      let l = await getNaturalAddress(query);
+      const list = document.getElementById('location-list');
+      list.classList.add('rounded-xl', 'border', 'mt-3')
+      list.innerHTML = '';
+      l.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item.display_name;
+        li.classList.add('cursor-pointer', 'hover:bg-gray-100', 'p-2', 'border-b')
+        list.appendChild(li);
 
+        li.addEventListener('click', (e) => {
+          console.log(item);
+          selectedLocation = item; //guardamos TODO el objeto
+          l = []
+          list.innerHTML = '';
+        })
+      })
     }
+  }
+})
 
-    /* Vehicle type buttons */
-    if (e.target.type == 'button') {
-        const cont = e.target.closest('.flex.gap-4.mb-6')
-        e.target.classList.add('active-btn')
-        if (cont) {
-            const btn = cont.querySelectorAll('button')
-            btn.forEach(button => {
-                if (button !== e.target) {
-                    button.classList.remove('active-btn')
-                }
-            })
+
+document.addEventListener('submit', (e) => {
+  /* Submit button */
+  e.preventDefault()
+
+  /* Get form */
+  const form = e.target.closest('form')
+  /* Get data from form */
+  const data = new FormData(form);
+
+  if (selectedLocation) {
+    data.append('lat', selectedLocation.lat);
+    data.append('lon', selectedLocation.lon);
+    data.append('display_name', selectedLocation.display_name);
+  }
+  console.log(Object.fromEntries(data.entries()));
+
+  /* Vehicle type buttons */
+  if (e.target.type == 'button') {
+    const cont = e.target.closest('.flex.gap-4.mb-6')
+    e.target.classList.add('active-btn')
+    if (cont) {
+      const btn = cont.querySelectorAll('button')
+      btn.forEach(button => {
+        if (button !== e.target) {
+          button.classList.remove('active-btn')
         }
+      })
     }
+  }
 
-    /* Role buttons */
-    if (e.target.classList.contains('choose-role')) {
-        const cont = e.target.closest('.grid.grid-cols-2.gap-4.mb-6')
-        e.target.classList.add('active-btn')
-        if (cont) {
-            const divs = cont.querySelectorAll('.choose-role')
-            divs.forEach(div => {
-                if (div !== e.target) {
-                    div.classList.remove('active-btn')
-                }
-            })
-            e.target.querySelector('.check').classList.remove('hidden')
-            const spans = cont.querySelectorAll('.check')
-            spans.forEach(span => {
-                if (span !== e.target.querySelector('.check')) {
-                    span.classList.add('hidden')
-                }
-            })
+  /* Role buttons */
+  if (e.target.classList.contains('choose-role')) {
+    const cont = e.target.closest('.grid.grid-cols-2.gap-4.mb-6')
+    e.target.classList.add('active-btn')
+    if (cont) {
+      const divs = cont.querySelectorAll('.choose-role')
+      divs.forEach(div => {
+        if (div !== e.target) {
+          div.classList.remove('active-btn')
         }
+      })
+      e.target.querySelector('.check').classList.remove('hidden')
+      const spans = cont.querySelectorAll('.check')
+      spans.forEach(span => {
+        if (span !== e.target.querySelector('.check')) {
+          span.classList.add('hidden')
+        }
+      })
     }
+  }
 })

@@ -1,10 +1,19 @@
 function obtenerUbicacion() {
     return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
+        navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
     });
 }
 
 export function useMap() {
+
     /* Dibujar el mapa en medellín */
     var map = L.map('map').setView([6.2442, -75.5812], 16);
 
@@ -30,12 +39,11 @@ export function useMap() {
 
             getAddress(lat, lng);
 
-
-            map.setView([pos.coords.latitude.pos.coords.longitude], 200);
+            map.setView([lat, lng], 16);
             if (marker) {
-                marker.setLatLng(pos.coords.latitud);
+                marker.setLatLng([lat, lng]);
             } else {
-                marker = L.marker(pos.coords.latitud, { draggable: true }).addTo(map);
+                marker = L.marker([lat, lng], { draggable: true }).addTo(map);
             }
         })
         .catch(err => {
@@ -64,11 +72,35 @@ export function useMap() {
         });
     });
 }
+
 function getAddress(lat, lng) {
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-    .then(response => response.json())
-    .then(data => {
-        console.log(data)
-        document.getElementById('direction').textContent = data.display_name;
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`, {mode:"no-cors"})
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            document.getElementById('direction').textContent = data.display_name;
         });
+}
+
+export async function getNaturalAddress(busqueda) {
+    try {
+        const query = encodeURIComponent(busqueda);
+        const viewbox = "-76.05,6.65,-75.20,5.85";
+        
+        if (!query || query.trim().length < 3) return
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=co&viewbox=${viewbox}&bounded=1&limit=40`,{mode:"no-cors"}
+        );
+
+        const data = await response.json();
+
+        if (data.length > 0) {
+            return data; //  ahora sí retorna
+        } else {
+            return []; // mejor retornar algo consistente
+        }
+
+    } catch (err) {
+        return null; // para manejar errores
+    }
 }
