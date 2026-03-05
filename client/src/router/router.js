@@ -1,33 +1,45 @@
-import { render } from "../core/render";
-import { RegisterForm } from "../views/RegisterForm";
+import { render } from "../core/render.js"
+import { RegisterForm, initRegisterForm } from "../views/RegisterForm.js"
+import { LoginView, initLoginView } from "../views/login.js"
+import { HomeView, initHomeView } from "../views/home.js"
+import { isLoggedIn } from "../utils/utils.js"
 
 export function router() {
-    const [,route, params] = location.hash.split('/')  || '/login'
-    console.log(route);
-    
+  const hash = location.hash || '#/login'
+  if (!location.hash) location.hash = '/login'
 
-    /* Validate if the user is logged in to access the app */
-    /* Not logged in, cannot access routes within the app */
-    /* TODO: Implement validation */
+  const [, route] = hash.split('/')
 
-    /* logged in, do not allow login and registration routes */
-    /* TODO: Implement validation */
+  const publicRoutes  = ['login', 'register']
+  const privateRoutes = ['home']
 
-    const routes = {
-        'register': {
-            view: RegisterForm,
-            role: null
-        }
-    }
+  if (isLoggedIn() && publicRoutes.includes(route)) {
+    location.hash = '/home'
+    return
+  }
 
-    const routeConfig = routes[route]
+  if (!isLoggedIn() && privateRoutes.includes(route)) {
+    location.hash = '/login'
+    return
+  }
 
+  const routes = {
+    'login':    { view: LoginView,    init: initLoginView    },
+    'register': { view: RegisterForm, init: initRegisterForm },
+    'home':     { view: HomeView,     init: initHomeView     }
+  }
 
-    /* If the route does not exist, use a default route */
-    if (!routeConfig) {
-        location.hash = '/login' //default route -- CHANGE
-        return
-    }
+  const routeConfig = routes[route]
 
-    render(routeConfig.view())
+  if (!routeConfig) {
+    location.hash = '/login'
+    return
+  }
+
+  render(routeConfig.view())
+  routeConfig.init?.()
 }
+/* MODO DESARROLLO — Sin base de datos
+ * Por ahora puedes ingresar cualquier email y contraseña para acceder.
+ * Para cerrar sesión y volver al login, abre la consola (F12) y ejecuta:
+ * localStorage.removeItem('token') y recarga la página */

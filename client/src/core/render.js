@@ -1,4 +1,4 @@
-const app = document.querySelector('.app')
+const app = document.getElementById('app')
 
 export function render(view) {
     app.innerHTML = `
